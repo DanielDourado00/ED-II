@@ -1,0 +1,106 @@
+
+TreeRedBlackNode *rotacaoEsquerda(TreeRedBlackNode *no);
+
+
+Cria uma variável auxiliar chamada aux, que aponta para o filho direito do nó recebido. Esse nó será o novo nó que ocupará a posição do nó recebido após a rotação.
+Faz o filho direito do nó recebido apontar para o filho esquerdo do auxiliar. Esse nó será o novo filho direito do nó recebido após a rotação.
+Verifica se o filho esquerdo do auxiliar é diferente de nulo. Se for, faz o pai do filho esquerdo do auxiliar apontar para o nó recebido. Isso mantém a relação de pai e filho entre os nós da árvore.
+Faz o pai do auxiliar apontar para o pai do nó recebido. Isso mantém a relação de pai e filho entre o auxiliar e o avô do nó recebido.
+Verifica se o pai do nó recebido é nulo. Se for, significa que o nó recebido era a raiz da árvore, e portanto o auxiliar passa a ser a nova raiz da árvore. Nesse caso, faz o pai do nó recebido apontar para o auxiliar.
+Verifica se o nó recebido é igual ao filho esquerdo do pai do nó recebido. Se for, significa que o nó recebido era o filho esquerdo do seu pai, e portanto o auxiliar passa a ser o novo filho esquerdo do pai do nó recebido. Nesse caso, faz o filho esquerdo do pai do nó recebido apontar para o auxiliar.
+Se não for nenhum dos casos anteriores, significa que o nó recebido era o filho direito do seu pai, e portanto o auxiliar passa a ser o novo filho direito do pai do nó recebido. Nesse caso, faz o filho direito do pai do nó recebido apontar para o auxiliar.
+Faz o filho esquerdo do auxiliar apontar para o nó recebido. Esse nó será o novo filho esquerdo do auxiliar após a rotação.
+Faz o pai do nó recebido apontar para o auxiliar. Isso mantém a relação de pai e filho entre o nó recebido e o auxiliar.
+Retorna o auxiliar como o novo nó que ocupa a posição do nó recebido.
+
+
+
+
+==================================================
+
+/* ===========================rotacoes============================= */
+
+/* 
+▷ Rotação simples à esquerda passa a se chamar rotação
+para a direita;
+▷ Rotação simples à direita passa a se chamar rotação para a
+esquerda; 
+*/
+
+/* TreeRedBlackNode *rotacaoEsquerda(TreeRedBlackNode *no) 
+{
+    TreeRedBlackNode *aux = no->dir; // auxiliar recebe o filho direito do no recebido
+    no->dir = aux->esq; // filho direito do no recebe o filho esquerdo do auxiliar
+    if (aux->esq != NULL) // se o filho esquerdo do auxiliar for diferente de nulo
+    {
+        aux->esq->pai = no; // o pai do filho esquerdo do auxiliar recebe o no
+    }
+    aux->pai = no->pai; // o pai do auxiliar recebe o pai do no
+    if (no->pai == NULL) // se o pai do no for nulo
+    {
+        no->pai = aux; // o pai do no recebe o auxiliar
+    }
+    else if (no == no->pai->esq) // se o no for igual ao filho esquerdo do pai do no
+    {
+        no->pai->esq = aux; // o filho esquerdo do pai do no recebe o auxiliar
+    }
+    else // se não
+    {
+        no->pai->dir = aux; // o filho direito do pai do no recebe o auxiliar
+    }
+    aux->esq = no; // o filho esquerdo do auxiliar recebe o no
+    no->pai = aux; // o pai do no recebe o auxiliar
+    return aux; // retorna o auxiliar
+} */
+
+
+
+==========================================================================
+TreeRedBlack.c 
+
+
+
+rotacoes esquerda:
+
+Caso 1e (esquerda) linha 101
+- V possui um tio rubro e seu pai é um filho rubro da esquerda
+- Não importa se v é um filho da esquerda ou direita
+- recolorimos o pai, avô e tio de v
+- Se o bisavô de v for negro está concluido
+- caso contrário:
+- v é elevado a dois níveis
+- executamos um passo-CE para o novo v (avô de v original)
+
+
+Caso 2de (direita-esquerda) linha 116
+- V é um filho da direita, cujo pai é um filho rubro da esquerda e cujo tio é 
+negro
+- Rotacionamos para a esquerda v e seu pai 
+- Atualizamos o nó corrente
+- O caso 2 (inserção) sempre é sucedido pelo caso 3
+- o caso 3 pode ocorrer sozinho
+
+
+Caso 3e (esquerda) linha 121
+- V é um filho da esquerda, cujo pai é um filho rubro da esquerda e cujo tio 
+é negro
+- Rotacionamos para a direita entre o avô e o pai
+- Recolorimos o pai e o avô
+- pai fica negro
+- avô fica rubro
+
+Caso 2ed (esquerda-direita) linha 141
+- V é um filho da esquerda, cujo pai é um filho rubro da direita e cujo tio é 
+negro
+- Rotacionamos para a direita v e seu pai
+- Atualizamos o nó corrente
+- Caímos no caso 3
+
+Caso 3d (direita) linha 149
+- V é um filho da direita, cujo pai é um filho rubro da direita e cujo tio é 
+negro
+- Rotacionamos para a esquerda entre o avô e o pai
+- Recolorimos o pai e avô
+- pai fica negro 
+- avô fica rubro
+
