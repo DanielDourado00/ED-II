@@ -186,74 +186,72 @@ void inserirFixup(rbtree *arvore, TreeRedBlackNode *novoNo)
 /* ===================================ROTACAO=================================== */
 //ESQUERDA  
 
-void rotacaoEsquerda(rbtree *arvore, TreeRedBlackNode *no) // funcao para rotacionar a arvore para a esquerda
-{
-    TreeRedBlackNode *aux = no->dir; // criando um no auxiliar que vai ser o filho direito do no
-    no->dir = aux->esq; // o filho direito do no recebe o filho esquerdo do no auxiliar
-    if (aux->esq != NULL) // se o filho esquerdo do no auxiliar for diferente de nulo
-    {
-        aux->esq->pai = no; // o pai do filho esquerdo do no auxiliar recebe o no
-        printf("O pai do filho esquerdo do no %d recebeu o no %d\n", aux->esq->id, no->id); 
+void rotacaoEsquerda(rbtree *arvore, TreeRedBlackNode *no) {
+    if (no == NULL || no->dir == NULL) {
+        return; // Verifica se o nó ou o seu filho direito são nulos
     }
-    aux->pai = no->pai; // o pai do no auxiliar recebe o pai do no
-    printf("o pai virou %d\n", aux->pai->id); 
-    if (no->pai == NULL) // se o pai do no for nulo, ou seja, se o no for a raiz
-    {
-        arvore->raiz = aux; // a raiz da arvore recebe o no auxiliar
-        printf("A raiz da arvore recebeu o no %d\n", aux->id); 
+    TreeRedBlackNode *aux = no->dir;
 
+    // Atualiza ponteiros dos nós pai
+    aux->pai = no->pai;
+    if (no->pai == NULL) {
+        arvore->raiz = aux;
+        printf("A raiz da arvore recebeu o no %d\n", aux->id);
+    } else if (no == no->pai->esq) {
+        no->pai->esq = aux;
+        printf("O filho esquerdo do pai do no %d recebeu o no %d\n", no->id, aux->id);
+    } else {
+        no->pai->dir = aux;
+        printf("O filho direito do pai do no %d recebeu o no %d\n", no->id, aux->id);
     }
-    else if (no == no->pai->esq) // se o no for igual ao filho esquerdo do pai do no
-    {
-        no->pai->esq = aux; // o filho esquerdo do pai do no recebe o no auxiliar
-        printf("O filho esquerdo do pai do no %d recebeu o no %d\n", no->id, aux->id); 
-        printf("O pai do no %d é o no %d\n", no->id, no->pai->id); 
+
+    no->dir = aux->esq;
+    printf("O filho direito do no %d recebeu o filho esquerdo do no %d\n", no->id, aux->id);
+    if (aux->esq != NULL) {
+        aux->esq->pai = no;
+        printf("O pai do filho esquerdo do no %d recebeu o no %d\n", aux->esq->id, no->id);
     }
-    else // se o no for igual ao filho direito do pai do no
-    {
-        no->pai->dir = aux; // o filho direito do pai do no recebe o no auxiliar
-        printf("O filho direito do pai do no %d recebeu o no %d\n", no->id, aux->id); 
-    }
-    aux->esq = no; // o filho esquerdo do no auxiliar recebe o no
-    printf("O filho esquerdo do no %d recebeu o no %d\n", aux->id, no->id); 
-    no->pai = aux; // o pai do no recebe o no auxiliar
-    printf("O pai do no %d recebeu o no %d\n", no->id, aux->id); 
+    no->pai = aux;
+    printf("O pai do no %d recebeu o no %d\n", no->id, aux->id);
+    aux->esq = no;
+    printf("O filho esquerdo do no %d recebeu o no %d\n", aux->id, no->id);
 }
+
 
 //DIREITA
 
-void rotacaoDireita(rbtree *arvore, TreeRedBlackNode *no) // funcao para rotacionar a arvore para a direita
-{
-    TreeRedBlackNode *aux = no->esq; // criando um no auxiliar que vai ser o filho esquerdo do no
-    no->esq = aux->dir; // o filho esquerdo do no recebe o filho direito do no auxiliar
+void rotacaoDireita(rbtree *arvore, TreeRedBlackNode *no) {
+    if (no == NULL || no->esq == NULL) {                                // Verifica se o nó ou o seu filho esquerdo são nulos, se forem, a função retorna, pois não é possível fazer a rotação e acaba ocasionando em segmentation fault
+        return; // Verifica se o nó ou o seu filho esquerdo são nulos
+    }
+    TreeRedBlackNode *aux = no->esq; // Cria um nó auxiliar que recebe o filho esquerdo do nó que será rotacionado
+
+    no->esq = aux->dir;
     printf("O filho esquerdo do no %d recebeu o filho direito do no %d\n", no->id, aux->id);
-    if (aux->dir != NULL) // se o filho direito do no auxiliar for diferente de nulo
-    {
-        aux->dir->pai = no; 
-        printf("O pai do filho direito do no %d recebeu o no %d\n", aux->dir->id, no->id); 
+    if (aux->dir != NULL) {
+        aux->dir->pai = no;
+        printf("O pai do filho direito do no %d recebeu o no %d\n", aux->dir->id, no->id);
     }
-    aux->pai = no->pai; // o pai do no auxiliar recebe o pai do no
-    if (no->pai == NULL) // se o pai do no for nulo, ou seja, se o no for a raiz
-    {
-        arvore->raiz = aux; 
+
+    aux->pai = no->pai;
+    printf("O pai do no %d recebeu o pai do no %d\n", aux->id, no->id);
+    if (no->pai == NULL) {
+        arvore->raiz = aux;
         printf("A raiz da arvore recebeu o no %d\n", aux->id);
-    }
-    else if (no == no->pai->dir) // se o no for igual ao filho direito do pai do no
-    {
-        no->pai->dir = aux; 
+    } else if (no == no->pai->dir) {
+        no->pai->dir = aux;
         printf("O filho direito do pai do no %d recebeu o no %d\n", no->id, aux->id);
-    }
-    else // se o no for igual ao filho esquerdo do pai do no
-    {
-        no->pai->esq = aux; 
+    } else {
+        no->pai->esq = aux;
         printf("O filho esquerdo do pai do no %d recebeu o no %d\n", no->id, aux->id);
     }
-    aux->dir = no; // o filho direito do no auxiliar recebe o no
-    printf("O filho direito do no %d recebeu o no %d\n", aux->id, no->id);
-    no->pai = aux; // o pai do no recebe o no auxiliar
-    printf("O pai do no %d recebeu o no %d\n", no->id, aux->id);
 
+    aux->dir = no;
+    printf("O filho direito do no %d recebeu o no %d\n", aux->id, no->id);
+    no->pai = aux;
+    printf("O pai do no %d recebeu o no %d\n", no->id, aux->id);
 }
+
 
 
 /* ===================================ROTACAO=================================== */
