@@ -11,7 +11,7 @@ int main()
 
    do
     {
-        printf("1 - Inserir \n2 - Buscar\n3 - Remover  \n4 - Sair\n"); // menu de opcoes
+        printf("1 - Inserir \n2 - Buscar\n3 - Remover\n4 - Altura Total da arvore\n5 - Altura Negra\n6 - Vizualizar info nos \n9 - Sair\n"); // menu de opcoes
         scanf("%d", &opcao); // lendo a opcao do usuario
         switch (opcao) // switch case para as opcoes
         {
@@ -61,15 +61,24 @@ int main()
                 printf("No nao encontrado!\n"); // mensagem de erro
             }
             break; // saindo do switch case
-
         case 4: // caso a opcao seja 4
+            system("clear"); // limpando a tela
+            printf("Altura total da arvore: %d\n", alturaArvore(arvore->raiz)); // imprimindo a altura total da arvore
+            break; // saindo do switch case
+        case 5: // caso a opcao seja 4
+            system("clear"); // limpando a tela
+            printf("Altura total Negra da arvore: %d\n", alturaNegra(arvore->raiz));
+            break; // saindo do switch
+        case 6: // caso a opcao seja 4
+            system("clear"); // limpando a tela
+            printarNos(arvore->raiz); // imprimindo os nos da arvore
+            break; // saindo do switch case
+        case 9: // caso a opcao seja 4
             system("clear"); // limpando a tela
             printf("Saindo...\n"); // mensagem de saida
             break; // saindo do switch case
         }
 
-    }  while (opcao != 4); // enquanto a opcao for diferente de 4
-
-    visualizarArvoreDot(arvore); // funcao do graphviz para visualizar a arvore passando por parametro a arvore
+    }  while (opcao != 9); // enquanto a opcao for diferente de 4
     return 0; // retornando 0
 }

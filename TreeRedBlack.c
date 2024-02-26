@@ -3,30 +3,6 @@
 
 /* definindo cores da arvore rubro negra - red black */
 
-#define RED 0
-#define BLACK 1
-
-/* =============================definicao das structs da arvore============================= */
-
-/* definindo estrutura de um no da arvore rubro negra - red black */
-struct TreeRedBlackNode
-{
-    int id;
-    int cor;
-    struct TreeRedBlackNode *esq;   
-    struct TreeRedBlackNode *dir;   
-    struct TreeRedBlackNode *pai;   // ponteiro para o no pai, esta struct é auto referenciada 
-};
-
-
-/* definindo estrutura da arvore rubro negra - red black */
-struct rbtree
-{
-    TreeRedBlackNode *raiz; // ponteiro para o no raiz da arvore
-    size_t tam; // tamanho da arvore  size_t = unsigned int que significa o tamanho de um objeto
-};
-
-/* =============================definicao das structs da arvore============================= */
 
 
 /* ===================================CRIACAO=================================== */
@@ -278,6 +254,16 @@ TreeRedBlackNode *buscarNo(rbtree *arvore, int id)
 /* ===================================Buscar NO=================================== */
 
 /* ===================================REMOCAO=================================== */
+
+//
+//
+/* 1) Se o nó a ser excluído não tiver filhos, basta removê-lo e atualizar o nó pai.
+2) Se o nó a ser excluído tiver apenas um filho, substitua o nó por seu filho.
+3) Se o nó a ser excluído tiver dois filhos, substitua o nó por seu sucessor na ordem, que é o nó mais à esquerda na subárvore direita. Em seguida, exclua o nó sucessor em ordem como se ele tivesse no máximo um filho.
+4) Depois que o nó for excluído, as propriedades rubro-negras poderão ser violadas. Para restaurar essas propriedades, algumas alterações de cor e rotações são executadas nos nós da árvore. As alterações são semelhantes às realizadas durante a inserção, porém com condições diferentes.
+5)A operação de exclusão em uma árvore rubro-negra leva O(log n) tempo em média, tornando-se uma boa opção para pesquisar e excluir elementos em grandes conjuntos de dados. */
+
+/* ===================================REMOCAO=================================== */
 //funcao para remover um no da arvore rubro negra - red black
 void removerNo(rbtree *arvore, int id) {
     TreeRedBlackNode *no = buscarNo(arvore, id);
@@ -419,8 +405,54 @@ void removerFixup(rbtree *arvore, TreeRedBlackNode *no, TreeRedBlackNode *pai) {
         no->cor = BLACK;
 }
 
+
 /* ===================================REMOCAO=================================== */
 
+/* =================================== print nos com suas infos=================================== */
+void printarNos(TreeRedBlackNode *no){
+    if (no != NULL) // se o no for diferente de nulo
+    {
+        printf("No: %d, Cor: %s, Pai: %d, Filho Esquerdo: %d, Filho Direito: %d\n", no->id, (no->cor == RED) ? "Vermelho (RED)" : "Preto (BLACK)", (no->pai != NULL) ? no->pai->id : -1, (no->esq != NULL) ? no->esq->id : -1, (no->dir != NULL) ? no->dir->id : -1);
+        printarNos(no->esq); // chamando a funcao para printar os nos da arvore esquerda
+        printarNos(no->dir); // chamando a funcao para printar os nos da arvore direita
+    }
+}
+
+/*======================================== Calcular altuaS======================================== */
+int alturaArvore(TreeRedBlackNode *no){  //funcao para calcular a altura da arvore rb ela ela recebe a raiz da arvore
+    if (no == NULL) // se o no for nulo
+        return 0; // retorna 0
+    else // se o no nao for nulo
+    {
+        int esq = alturaArvore(no->esq); // a altura da arvore esquerda recebe a funcao para calcular a altura da arvore esquerda de maneira recursiva
+        int dir = alturaArvore(no->dir); // a altura da arvore direita recebe a funcao para calcular a altura da arvore direita
+        if (esq > dir) // se a altura da arvore esquerda for maior que a altura da arvore direita
+            return esq + 1; // retorna a altura da arvore esquerda + 1
+        else // se a altura da arvore esquerda for menor ou igual a altura da arvore direita
+            return dir + 1; // retorna a altura da arvore direita + 1
+    }
+
+}
+
+int alturaNegra(TreeRedBlackNode *no) { //funcao para calcular a altura negra da arvore rb
+printf("altura negra\n");
+    if (no == NULL) // se o no for nulo
+        return 1; // retorna 1
+    else // se o no nao for nulo
+    {
+        int esq = alturaNegra(no->esq); // a altura negra da arvore esquerda recebe a funcao para calcular a altura negra da arvore esquerda de maneira recursiva
+        int dir = alturaNegra(no->dir); // a altura negra da arvore direita recebe a funcao para calcular a altura negra da arvore direita
+        if (esq != dir) // se a altura negra da arvore esquerda for diferente da altura negra da arvore direita
+            return -1; // retorna -1 significa que a arvore nao é rubro negra
+        else // se a altura negra da arvore esquerda for igual a altura negra da arvore direita
+        {
+            if (no->cor == BLACK) // se a cor do no for preta
+                return esq + 1; // retorna a altura negra da arvore esquerda + 1
+            else // se a cor do no for vermelha
+                return esq; // retorna a altura negra da arvore esquerda
+        }
+    }
+}
 
 
 /* =============================Plot .dot =============================*/
