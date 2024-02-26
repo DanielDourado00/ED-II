@@ -11,7 +11,7 @@ int main()
 
    do
     {
-        printf("1 - Inserir \n2 - Buscar\n3 - Remover\n4 - Altura Total da arvore\n5 - Altura Negra\n6 - Vizualizar info nos \n9 - Sair\n"); // menu de opcoes
+        printf("1 - Inserir \n2 - Buscar\n3 - Remover\n4 - Altura Total da arvore\n5 - Altura Negra\n6 - Vizualizar info nos\n7 -Percento Negro\n8 - Percento Rubro\n9 - Custo de busca \n0 - Sair\n"); // menu de opcoes
         scanf("%d", &opcao); // lendo a opcao do usuario
         switch (opcao) // switch case para as opcoes
         {
@@ -65,20 +65,36 @@ int main()
             system("clear"); // limpando a tela
             printf("Altura total da arvore: %d\n", alturaArvore(arvore->raiz)); // imprimindo a altura total da arvore
             break; // saindo do switch case
-        case 5: // caso a opcao seja 4
+        case 5: // caso a opcao seja 
             system("clear"); // limpando a tela
             printf("Altura total Negra da arvore: %d\n", alturaNegra(arvore->raiz));
             break; // saindo do switch
-        case 6: // caso a opcao seja 4
+        case 6: // caso a opcao seja 6
             system("clear"); // limpando a tela
             printarNos(arvore->raiz); // imprimindo os nos da arvore
             break; // saindo do switch case
-        case 9: // caso a opcao seja 4
+        case 7: // caso a opcao seja 7
+            system("clear"); // limpando a tela
+            printf("Considerando a as folhas como negras:\n");
+            printf("A Percentagem de nos negros é de: %f", percentagemNegra(arvore->raiz));
+            break;
+        case 8:
+            system("clear");
+            printf("Considerando a as folhas como negras:\n");
+            printf("A Percentagem de nos Rubros é de: %f\n", percentagemVermelha(arvore->raiz));
+            break;
+        case 9:
+            system("clear");
+            printf("O custo medio de busca é: %d", custoMedioBusca(arvore, id));  //numero de comparacao de chaves
+            break;
+        case 0: // caso a opcao seja 4
             system("clear"); // limpando a tela
             printf("Saindo...\n"); // mensagem de saida
             break; // saindo do switch case
         }
 
-    }  while (opcao != 9); // enquanto a opcao for diferente de 4
+    }  while (opcao != 0); // enquanto a opcao for diferente de 4
     return 0; // retornando 0
+
+   
 }

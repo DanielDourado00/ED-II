@@ -251,6 +251,42 @@ TreeRedBlackNode *buscarNo(rbtree *arvore, int id)
     return aux; // retornando o no auxiliar
 }
 
+//Acrescente um método que calcule o custo médio de uma busca (O custo da busca é o número de comparações de chaves).
+//funcao para calcular o custo medio de uma busca:
+double custoMedioBusca(rbtree *arvore, int id)
+{
+    TreeRedBlackNode *aux = buscarNo(arvore, id); // Usando sua função buscarNo
+    int custo = 0;
+    int totalElementos = 0;
+
+    if (aux != NULL) // Se o elemento foi encontrado
+    {
+        totalElementos++; // Atualize o total de elementos
+    }
+
+    while (aux != NULL && aux->id != id)
+    {
+        if (id < aux->id)
+        {
+            aux = aux->esq;
+        }
+        else
+        {
+            aux = aux->dir;
+        }
+        custo++;
+        totalElementos++; // Atualize o total de elementos
+    }
+
+    // Calcula o custo médio (se houver elementos na árvore)
+    double custoMedio = (totalElementos > 0) ? (double)custo / totalElementos : 0.0;
+
+    return custoMedio;
+}
+
+
+
+
 /* ===================================Buscar NO=================================== */
 
 /* ===================================REMOCAO=================================== */
@@ -435,14 +471,13 @@ int alturaArvore(TreeRedBlackNode *no){  //funcao para calcular a altura da arvo
 }
 
 int alturaNegra(TreeRedBlackNode *no) { //funcao para calcular a altura negra da arvore rb
-printf("altura negra\n");
     if (no == NULL) // se o no for nulo
         return 1; // retorna 1
     else // se o no nao for nulo
     {
         int esq = alturaNegra(no->esq); // a altura negra da arvore esquerda recebe a funcao para calcular a altura negra da arvore esquerda de maneira recursiva
         int dir = alturaNegra(no->dir); // a altura negra da arvore direita recebe a funcao para calcular a altura negra da arvore direita
-        if (esq != dir) // se a altura negra da arvore esquerda for diferente da altura negra da arvore direita
+        if (esq != -1 && dir != -1 && esq != dir) // se a altura negra da arvore esquerda for diferente de -1 e a altura negra da arvore direita for diferente de -1 e a altura negra da arvore esquerda for diferente da altura negra da arvore direita
             return -1; // retorna -1 significa que a arvore nao é rubro negra
         else // se a altura negra da arvore esquerda for igual a altura negra da arvore direita
         {
@@ -453,6 +488,22 @@ printf("altura negra\n");
         }
     }
 }
+
+/*======================================== Calcular altuaS======================================== */
+
+/*======================================== Calcular porcentagem======================================== */
+float percentagemNegra(TreeRedBlackNode *no){ //sem considerar que os NULL sao pretos, apenas considerando os nos
+    int altura = alturaArvore(no); // a altura da arvore recebe a funcao para calcular a altura da arvore
+    int alturaN = alturaNegra(no); // a altura negra da arvore recebe a funcao para calcular a altura negra da arvore
+    return ((float)alturaN / (float)altura) * 100; // retorna a porcentagem de nos pretos
+}
+
+float percentagemVermelha(TreeRedBlackNode *no){ //sem considerar os as cores pretas do NULL
+    int altura = alturaArvore(no); // a altura da arvore recebe a funcao para calcular a altura da arvore
+    int alturaN = alturaNegra(no); // a altura negra da arvore recebe a funcao para calcular a altura negra da arvore
+    return ((float)(altura - alturaN) / (float)altura) * 100; // retorna a porcentagem de nos vermelhos
+}
+
 
 
 /* =============================Plot .dot =============================*/

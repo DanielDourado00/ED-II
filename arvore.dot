@@ -1,13 +1,19 @@
 digraph ArvoreRubroNegra {
+1051 [label="1051", color=black];
+1051 -> 1022;
 1022 [label="1022", color=black];
 1022 -> 1010;
 1010 [label="1010", color=black];
-1022 -> 1051;
-1051 [label="1051", color=red];
-1051 -> 1044;
-1044 [label="1044", color=black];
-1044 -> 1041;
-1041 [label="1041", color=red];
-1051 -> 1052;
+1022 -> 1041;
+1041 [label="1041", color=black];
+1051 -> 5436;
+5436 [label="5436", color=black];
+5436 -> 3456;
+3456 [label="3456", color=red];
+3456 -> 1052;
 1052 [label="1052", color=black];
+3456 -> 3466;
+3466 [label="3466", color=black];
+5436 -> 8574;
+8574 [label="8574", color=black];
 }
