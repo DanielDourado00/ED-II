@@ -12,6 +12,9 @@ void inserirNo(rbtree *arvore, int id);
 void inserirFixup(rbtree *arvore, TreeRedBlackNode *novoNo);
 void rotacaoEsquerda(rbtree *arvore, TreeRedBlackNode *no);
 void rotacaoDireita(rbtree *arvore, TreeRedBlackNode *no);
+TreeRedBlackNode *buscarNo(rbtree *arvore, int id);
+void removerNo(rbtree *arvore, int id);
+void removerFixup(rbtree *arvore, TreeRedBlackNode *no, TreeRedBlackNode *pai);
 
 void gerarDOT(TreeRedBlackNode *no, FILE *arquivoDOT);
 void visualizarArvoreDot(rbtree *arvore);

@@ -104,3 +104,121 @@ negro
 - pai fica negro 
 - avô fica rubro
 
+
+===============================REMOCAO==================================
+
+void removerNo(rbtree *arvore, int id) {
+    TreeRedBlackNode *no = buscarNo(arvore, id); // buscando o no que vai ser removido
+    if (no == NULL) {
+        printf("O no %d nao existe na arvore.\n", id);
+        return;
+    }
+    TreeRedBlackNode *aux = no; // criando um no auxiliar que vai ser o no que vai ser removido
+    int corOriginal = aux->cor; // criando uma variavel que vai ser a cor original do no que vai ser removido
+    TreeRedBlackNode *aux2; // criando um no auxiliar 2
+    if (no->esq == NULL) // se o filho esquerdo do no que vai ser removido for nulo
+    {
+        aux2 = no->dir; // o no auxiliar 2 recebe o filho direito do no que vai ser removido
+        transplantar(arvore, no, no->dir); // chamando a funcao para transplantar a arvore
+    }
+    else if (no->dir == NULL) // se o filho direito do no que vai ser removido for nulo
+    {
+        aux2 = no->esq; // o no auxiliar 2 recebe o filho esquerdo do no que vai ser removido
+        transplantar(arvore, no, no->esq); // chamando a funcao para transplantar a arvore
+    }
+    else // se o no que vai ser removido tiver dois filhos
+    {
+        aux = minimo(no->dir); // o no auxiliar recebe o no minimo do filho direito do no que vai ser removido
+        corOriginal = aux->cor; // a cor original do no que vai ser removido recebe a cor do no auxiliar
+        aux2 = aux->dir; // o no auxiliar 2 recebe o filho direito do no auxiliar
+        if (aux->pai == no) // se o pai do no auxiliar for o no que vai ser removido
+        {
+            if (aux2 != NULL) // se o no auxiliar 2 for diferente de nulo
+            {
+                aux2->pai = aux; // o pai do no auxiliar 2
+            }
+        }
+        else // se o pai do no auxiliar nao for o no que vai ser removido
+        {
+            transplantar(arvore, aux, aux->dir); // chamando a funcao para transplantar a arvore
+            aux->dir = no->dir; // o filho direito do no auxiliar recebe o filho direito do no que vai ser removido
+            aux->dir->pai = aux; // o pai do filho direito do no auxiliar recebe o no auxiliar
+        }
+        transplantar(arvore, no, aux); // chamando a funcao para transplantar a arvore
+        aux->esq = no->esq; // o filho esquerdo do no auxiliar recebe o filho esquerdo do no que vai ser removido
+        aux->esq->pai = aux; // o pai do filho esquerdo do no auxiliar recebe o no auxiliar
+        aux->cor = no->cor; // a cor do no auxiliar recebe a cor do no que vai ser removido
+    }
+    if (corOriginal == BLACK) // se a cor original do no que vai ser removido for preta
+    {
+        removerFixup(arvore, aux2); // chamando a funcao para corrigir a arvore
+    }
+    arvore->tam--; // o tamanho da arvore diminui
+    free(no); // liberando a memoria do no que foi removido
+}
+
+
+
+
+
+
+
+
+================================
+void removerNo(rbtree *arvore, int id)
+{
+    TreeRedBlackNode *no = buscarNo(arvore, id); // criando um no que vai receber o no que o usuario quer remover
+    TreeRedBlackNode *aux = NULL; // criando um no auxiliar que vai ser nulo
+    TreeRedBlackNode *aux2 = NULL; // criando um no auxiliar 2 que vai ser nulo
+    if (no == NULL) // se o no que o usuario quer remover for nulo
+    {
+        printf("O no %d nao existe na arvore!\n", id); // mensagem de erro
+        return; // retornando
+    }
+    if (no->esq == NULL || no->dir == NULL) // se o filho esquerdo do no que o usuario quer remover for nulo ou o filho direito do no que o usuario quer remover for nulo
+    {
+        aux = no; // o no auxiliar recebe o no que o usuario quer remover
+    }
+    else // se o filho esquerdo do no que o usuario quer remover nao for nulo e o filho direito do no que o usuario quer remover nao for nulo
+    {
+        aux = no->dir; // o no auxiliar recebe o filho direito do no que o usuario quer remover
+        while (aux->esq != NULL) // enquanto o filho esquerdo do no auxiliar for diferente de nulo
+        {
+            aux = aux->esq; // o no auxiliar recebe o filho esquerdo do no auxiliar
+        }
+    }
+    if (aux->esq != NULL) // se o filho esquerdo do no auxiliar for diferente de nulo
+    {
+        aux2 = aux->esq; // o no auxiliar 2 recebe o filho esquerdo do no auxiliar
+    }
+    else // se o filho esquerdo do no auxiliar for nulo
+    {
+        aux2 = aux->dir; // o no auxiliar 2 recebe o filho direito do no auxiliar
+    }
+    if (aux2 != NULL) // se o no auxiliar 2 for diferente de nulo
+    {
+        aux2->pai = aux->pai; // o pai do no auxiliar 2 recebe o pai do no auxiliar
+    }
+    if(aux->pai == NULL) // se o pai do no auxiliar for nulo
+    {
+        arvore->raiz = aux2; // a raiz da arvore recebe o no auxiliar 2
+    }
+    else if(aux == aux->pai->esq) // se o no auxiliar for igual ao filho esquerdo do pai do no auxiliar
+    {
+        aux->pai->esq = aux2; // o filho esquerdo do pai do no auxiliar recebe o no auxiliar 2
+    }
+    else // se o no auxiliar for igual ao filho direito do pai do no auxiliar
+    {
+        aux->pai->dir = aux2; // o filho direito do pai do no auxiliar recebe o no auxiliar 2
+    }
+    if(aux != no) // se o no auxiliar for diferente do no que o usuario quer remover
+    {
+        no->id = aux->id; // o id do no que o usuario quer remover recebe o id do no auxiliar
+    }
+    if(aux->cor == BLACK) // se a cor do no auxiliar for preta
+    {
+        removerFixup(arvore, aux2); // chamando a funcao para corrigir a arvore
+    }
+    free(aux); // liberando a memoria do no auxiliar
+    arvore->tam--; // o tamanho da arvore diminui
+}

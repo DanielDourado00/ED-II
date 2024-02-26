@@ -256,9 +256,174 @@ void rotacaoDireita(rbtree *arvore, TreeRedBlackNode *no) {
 
 /* ===================================ROTACAO=================================== */
 
+/* ===================================Buscar NO=================================== */
+//busacar no buscarNo
+TreeRedBlackNode *buscarNo(rbtree *arvore, int id)
+{
+    TreeRedBlackNode *aux = arvore->raiz; // criando um no auxiliar que vai ser a raiz da arvore
+    while (aux != NULL && aux->id != id) // enquanto o no auxiliar for diferente de nulo e o id do no auxiliar for diferente do id que o usuario digitou
+    {
+        if (id < aux->id) // se o id que o usuario digitou for menor que o id do no auxiliar
+        {
+            aux = aux->esq; // o no auxiliar recebe o filho esquerdo do no auxiliar
+        }
+        else // se o id que o usuario digitou for maior que o id do no auxiliar
+        {
+            aux = aux->dir; // o no auxiliar recebe o filho direito do no auxiliar
+        }
+    }
+    return aux; // retornando o no auxiliar
+}
+
+/* ===================================Buscar NO=================================== */
+
+/* ===================================REMOCAO=================================== */
+//funcao para remover um no da arvore rubro negra - red black
+void removerNo(rbtree *arvore, int id) {
+    TreeRedBlackNode *no = buscarNo(arvore, id);
+    if (no == NULL) {
+        printf("O no %d nao existe na arvore!\n", id);
+        return;
+    }
+
+    TreeRedBlackNode *aux = no;
+    TreeRedBlackNode *aux_pai = NULL; // Adicionando um ponteiro para o pai do nó auxiliar
+
+    // Definindo o nó a ser removido
+    if (no->esq == NULL || no->dir == NULL)
+        aux = no;
+    else {
+        aux = no->dir;
+        while (aux->esq != NULL)
+            aux = aux->esq;
+    }
+
+    // Atualizando o ponteiro do pai do nó auxiliar
+    aux_pai = aux->pai;
+
+    // Definindo o nó auxiliar 2 que será o filho não nulo de aux
+    TreeRedBlackNode *aux2 = (aux->esq != NULL) ? aux->esq : aux->dir;
+
+    // Atualizando o pai de aux2, se existir
+    if (aux2 != NULL)
+        aux2->pai = aux_pai;
+
+    // Atualizando a raiz da árvore, se necessário
+    if (aux_pai == NULL)
+        arvore->raiz = aux2;
+    else if (aux == aux_pai->esq)
+        aux_pai->esq = aux2;
+    else
+        aux_pai->dir = aux2;
+
+    // Se aux é diferente de no, então copie o conteúdo de aux para no
+    if (aux != no)
+        no->id = aux->id;
+
+    // Se a cor de aux é preta, chame a função de correção
+    if (aux->cor == BLACK)
+        removerFixup(arvore, aux2, aux_pai);
+
+    // Liberando memória
+    free(aux);
+    arvore->tam--;
+}
+
+void removerFixup(rbtree *arvore, TreeRedBlackNode *no, TreeRedBlackNode *pai) {
+    while (no != arvore->raiz && (no == NULL || no->cor == BLACK)) {
+        if (no == pai->esq) {
+            TreeRedBlackNode *irmao = pai->dir;
+            if (irmao->cor == RED) {
+                printf("O irmao do no %d e vermelho\n", no->id);
+                irmao->cor = BLACK;
+                printf("O irmao do no %d foi pintado de preto\n", no->id);
+                pai->cor = RED;
+                printf("O pai do no %d foi pintado de vermelho\n", no->id);
+                printf("rotaciono o pai a esquerda\n");
+                rotacaoEsquerda(arvore, pai);
+                irmao = pai->dir;
+            }
+            if ((irmao->esq == NULL || irmao->esq->cor == BLACK) &&
+                (irmao->dir == NULL || irmao->dir->cor == BLACK)) {
+                irmao->cor = RED;
+                printf("O irmao do no %d foi pintado de vermelho\n", no->id);
+                no = pai;
+                printf("O no %d recebeu o pai\n", no->id);
+                pai = no->pai;
+                printf("O pai do no %d recebeu o pai do no %d\n", no->id, no->id);
+            } else {
+                if (irmao->dir == NULL || irmao->dir->cor == BLACK) {
+                    if (irmao->esq != NULL)
+                        irmao->esq->cor = BLACK;
+                        printf("O filho esquerdo do irmao do no %d foi pintado de preto\n", no->id);
+                    irmao->cor = RED;
+                    printf("O irmao do no %d foi pintado de vermelho\n", no->id);
+                    printf("rotaciono o irmao a direita\n");
+                    rotacaoDireita(arvore, irmao);
+                    irmao = pai->dir;
+                }
+                irmao->cor = pai->cor;
+                printf("O irmao do no %d recebeu a cor do pai\n", no->id);
+                pai->cor = BLACK;
+                printf("O pai do no %d foi pintado de preto\n", no->id);
+                if (irmao->dir != NULL)                     // Se o irmão tiver um filho direito
+                    irmao->dir->cor = BLACK;
+                    printf("O filho direito do irmao do no %d foi pintado de preto\n", no->id);
+                printf("rotaciono o pai a esquerda\n");
+                rotacaoEsquerda(arvore, pai);
+                no = arvore->raiz;
+            }
+        } else {
+            TreeRedBlackNode *irmao = pai->esq;
+            if (irmao->cor == RED) {
+                irmao->cor = BLACK;
+                printf("O irmao do no %d foi pintado de preto\n", no->id);
+                pai->cor = RED;
+                printf("O pai do no %d foi pintado de vermelho\n", no->id);
+                printf("rotaciono o pai a direita\n");
+                rotacaoDireita(arvore, pai);
+                irmao = pai->esq;
+            }
+            if ((irmao->dir == NULL || irmao->dir->cor == BLACK) &&        
+                (irmao->esq == NULL || irmao->esq->cor == BLACK)) {         // Se o irmão não tiver filhos ou ambos forem pretos & irmão for preto
+                irmao->cor = RED;
+                printf("O irmao do no %d foi pintado de vermelho\n", no->id);
+                no = pai;
+                printf("O no %d recebeu o pai\n", no->id);
+                pai = no->pai;
+                printf("O pai do no %d recebeu o pai do no %d\n", no->id, no->id);
+            } else {
+                if (irmao->esq == NULL || irmao->esq->cor == BLACK) {       // Se o irmão não tiver um filho esquerdo ou o filho esquerdo for preto
+                    if (irmao->dir != NULL)
+                        irmao->dir->cor = BLACK;
+                    irmao->cor = RED;
+                    printf("O irmao do no %d foi pintado de vermelho\n", no->id);
+                    printf("rotaciono o irmao a esquerda\n");
+                    rotacaoEsquerda(arvore, irmao);
+                    irmao = pai->esq;
+                }
+                irmao->cor = pai->cor;
+                printf("O irmao do no %d recebeu a cor do pai\n", no->id);
+                pai->cor = BLACK;
+                if (irmao->esq != NULL)                    // Se o irmão tiver um filho esquerdo
+                    irmao->esq->cor = BLACK;
+                    printf("O filho esquerdo do irmao do no %d foi pintado de preto\n", no->id);
+                printf("rotaciono o pai a direita\n");
+                rotacaoDireita(arvore, pai);
+
+                no = arvore->raiz; // O nó recebe a raiz da árvore
+            }
+        }
+    }
+    if (no != NULL)                 // Se o nó for diferente de nulo
+        no->cor = BLACK;
+}
+
+/* ===================================REMOCAO=================================== */
 
 
 
+/* =============================Plot .dot =============================*/
 //funcao para o arquivo .dot do graphviz
 
 void gerarDOT(TreeRedBlackNode *no, FILE *arquivoDOT) {
