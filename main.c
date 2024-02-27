@@ -85,7 +85,7 @@ int main()
             break;
         case 9:
             system("clear");
-            printf("O custo medio de busca é: %d", custoMedioBusca(arvore, id));  //numero de comparacao de chaves
+            printf("O custo medio de busca é: %f", custoMedioBusca(arvore, id));  //numero de comparacao de chaves
             break;
         case 0: // caso a opcao seja 4
             system("clear"); // limpando a tela

@@ -1,0 +1,25 @@
+/* funcao para remover um no da arvore, tendo em vista os seguintes casos:
+CASO1)
+-irmao do no a ser removido é vermelho
+-pai fica rubro
+- irmao fica negro
+-rotaciona esquerda
+-atualiza novo irmao
+-apos isso o no ainda é duplo negro, novo irmao e negro ocasionando no caso 2
+CASO2)
+-irmao negro fica rubro
+-no aponta para pai
+-se o no for rubro troca para negro
+-se nao o novo no duplo negro inicia nova verificacao
+CASO3) irmao negro filho direito do irmao negro
+-filho esquerdo do irmao fica negro
+-irmao fica rubro
+-rotaciona direita
+-atualiza irmao
+-apos rotacionar o no ainda e duplo negro e novo irmao e negro ocasionando o caso4
+CASO4) irmao negro e filho direito do irmao rubro
+- irmao copia a cor do pai
+-pai e direita ficam negros
+-rotaciona pai esquerda
+-se raiz for rubro troque para negro
+ */

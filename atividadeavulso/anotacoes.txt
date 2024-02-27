@@ -245,6 +245,34 @@ notas sobre remocao:
 5)A operação de exclusão em uma árvore rubro-negra leva O(log n) tempo em média, tornando-se uma boa opção para pesquisar e excluir elementos em grandes conjuntos de dados.
 
 
+exlucao:
+
+Caso 1 - irmão do nó é vermelho
+● Pai fica vermelho
+● Irmão (nó direito) fica preto
+● Rotação à esquerda do pai
+
+Resultado caso 1 : preparou para Caso 2 : irmão da direita é preto e filhos são pretos
+● Irmão direito fica vermelho
+● Sobe na árvore para testar próximos casos
+Resultado caso 2 : novo nó é vermelho, retorna do algoritmo e seta para preto
+Ajustando a árvore para os demais casos
+● Irmão (nó direito) fica preto
+● Rotação à esquerda do pai
+Caso 3: irmão da direita é preto, filho direito do irmão é preto e filho esquerdo é vermelho:
+Irmão direito fica vermelho
+Filho esquerdo fica preto
+Rotação à direita do irmão esquerdo
+Caso 4: Irmão da direita é preto, e filho direito é vermelho
+Nó
+Irmão direito
+Filho direito
+● Nó da direita fica com a cor do pai
+● Nó pai fica preto
+● Filho direito fica preto
+● Rotaciona pai à esquerda
+
+
 
 
 
