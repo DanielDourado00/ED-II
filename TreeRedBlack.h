@@ -38,6 +38,9 @@ void removerFixup(rbtree *arvore, TreeRedBlackNode *no, TreeRedBlackNode *pai) ;
 int alturaArvore(TreeRedBlackNode *no);
 int alturaNegra(TreeRedBlackNode *no);
 void printarNos(TreeRedBlackNode *no);
+int contaNos(TreeRedBlackNode *no);
+int contarNosVermelhos(TreeRedBlackNode *no);
+int contaNosNegros(TreeRedBlackNode *no);
 float percentagemNegra(TreeRedBlackNode *no);   // funcao para calcular a porcentagem de nos negros
 float percentagemVermelha(TreeRedBlackNode *no);    // funcao para calcular a porcentagem nos rubros
 double custoMedioBusca(rbtree *arvore, int id);

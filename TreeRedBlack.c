@@ -255,36 +255,22 @@ TreeRedBlackNode *buscarNo(rbtree *arvore, int id)
 //funcao para calcular o custo medio de uma busca:
 double custoMedioBusca(rbtree *arvore, int id)
 {
-    TreeRedBlackNode *aux = buscarNo(arvore, id); // Usando sua função buscarNo
-    int custo = 0;
-    int totalElementos = 0;
-
-    if (aux != NULL) // Se o elemento foi encontrado
+    TreeRedBlackNode *aux = arvore->raiz; // criando um no auxiliar que vai ser a raiz da arvore
+    int comp = 0; // criando uma variavel comp que vai ser o numero de comparacoes de chaves
+    while (aux != NULL && aux->id != id) // enquanto o no auxiliar for diferente de nulo e o id do no auxiliar for diferente do id que o usuario digitou
     {
-        totalElementos++; // Atualize o total de elementos
-    }
-
-    while (aux != NULL && aux->id != id)        // Enquanto o nó não for nulo e o id do nó for diferente do id que o usuário digitou
-    {
-        if (id < aux->id)                       //se o id que o usuario digitou for menor que o id do no auxiliar
+        comp++; // o numero de comparacoes de chaves aumenta
+        if (id < aux->id) // se o id que o usuario digitou for menor que o id do no auxiliar
         {
-            aux = aux->esq;                     //o no auxiliar recebe o filho esquerdo do no auxiliar
+            aux = aux->esq; // o no auxiliar recebe o filho esquerdo do no auxiliar
         }
-        else                                    
+        else // se o id que o usuario digitou for maior que o id do no auxiliar
         {
-            aux = aux->dir;
+            aux = aux->dir; // o no auxiliar recebe o filho direito do no auxiliar
         }
-        custo++;                                // Atualize o custo
-        totalElementos++; // Atualize o total de elementos
     }
-
-    // Calcula o custo médio (se houver elementos na árvore)
-    double custoMedio = (totalElementos > 0) ? (double)custo / totalElementos : 0.0;
-
-    return custoMedio;
+    return comp; // retornando o numero de comparacoes de chaves
 }
-
-
 
 
 /* ===================================Buscar NO=================================== */
@@ -295,105 +281,158 @@ double custoMedioBusca(rbtree *arvore, int id)
 void deleteno(rbtree *arvore, TreeRedBlackNode *no) {
     TreeRedBlackNode *aux = NULL;
     TreeRedBlackNode *aux2 = NULL;
-    if (no->esq == NULL || no->dir == NULL) {
+    if (no->esq == NULL || no->dir == NULL) {           // Se o nó tem menos de dois filhos 
         aux = no;
-    } else {
+    } else {                                            // Se o nó tem dois filhos
         aux = no->dir;
-        while (aux->esq != NULL) {
+        while (aux->esq != NULL) {                      // Enquanto o filho esquerdo do nó não for nulo
             aux = aux->esq;
+            //printf("O no %d recebeu o filho esquerdo do no %d\n", aux->id, no->id);
         }
     }
-    if (aux->esq != NULL) {
+    if (aux->esq != NULL) {                             // Se o filho esquerdo do nó não for nulo
         aux2 = aux->esq;
-    } else {
+    } else {                                            
         aux2 = aux->dir;
     }
-    if (aux2 != NULL) {
-        aux2->pai = aux->pai;
+    if (aux2 != NULL) {                                 // Se o filho direito do nó não for nulo
+        aux2->pai = aux->pai;               
     }
-    if (aux->pai == NULL) {
+    if (aux->pai == NULL) {                             // Se o pai do nó for nulo
         arvore->raiz = aux2;
-    } else {
-        if (aux == aux->pai->esq) {
-            aux->pai->esq = aux2;
+    } else {                                                         
+        if (aux == aux->pai->esq) {                 // Se o nó for igual ao filho esquerdo do pai do nó
+            aux->pai->esq = aux2;                   // O filho esquerdo do pai do nó recebe o filho direito do nó
         } else {
-            aux->pai->dir = aux2;
+            aux->pai->dir = aux2;                   // O filho direito do pai do nó recebe o filho direito do nó
         }
     }
-    if (aux != no) {
-        no->id = aux->id;
+    if (aux != no) {                                // Se o nó aux for diferente do nó
+        no->id = aux->id;                           // O id do nó recebe o id do nó aux
     }
-    if (aux->cor == BLACK) {
-        removerFixup(arvore, aux2, aux->pai);
+    if (aux->cor == BLACK) {                        // Se a cor do nó aux for preta
+        removerFixup(arvore, aux2, aux->pai);       // Chama a função removerFixup
     }
     free(aux);
 }
 
 void removerFixup(rbtree *arvore, TreeRedBlackNode *no, TreeRedBlackNode *pai) {
-    TreeRedBlackNode *aux = NULL;
-    while ((no == NULL || no->cor == BLACK) && no != arvore->raiz) {
-        if (no == pai->esq) {
-            aux = pai->dir;
-            if (aux->cor == RED) {
+    TreeRedBlackNode *aux = NULL; //aux null pq é o nó que vai ser removido
+    while ((no == NULL || no->cor == BLACK) && no != arvore->raiz) {                // Enquanto o nó for nulo ou a cor do nó for preta e o nó for diferente da raiz
+        if (no == pai->esq) {                                                        // Se o nó for igual ao filho esquerdo do pai
+            aux = pai->dir;                                                         // O nó aux recebe o filho direito do pai
+
+
+            if (aux->cor == RED) {                                                                                   //*caso 1
+            printf("Caso 1\n");
                 aux->cor = BLACK;
-                pai->cor = RED;
+                printf("O irmao vermelho %d foi pintado de preto\n", aux->id);                   
+                pai->cor = RED;             
+                printf("O pai %d foi pintado fica rubro\n", pai->id);
+                printf("rotaciono o pai a esquerda\n");
                 rotacaoEsquerda(arvore, pai);
                 aux = pai->dir;
+                printf("O no %d recebeu o filho direito do pai %d\n", aux->id, pai->id);
             }
-            if ((aux->esq == NULL || aux->esq->cor == BLACK) && (aux->dir == NULL || aux->dir->cor == BLACK)) {
+
+
+            
+            if ((aux->esq == NULL || aux->esq->cor == BLACK) && (aux->dir == NULL || aux->dir->cor == BLACK)) {     //*caso 2
                 aux->cor = RED;
+                printf("Irmao direita %d foi pintado de vermelho\n", aux->id);
+                printf("O irmao direito %d foi pintado de vermelho\n", aux->id);
                 no = pai;
+                printf("O no %d recebeu o pai %d\n", no->id, pai->id);
                 pai = no->pai;
+                printf("O pai %d recebeu o avo %d\n", pai->id, no->pai->id);
+
+
+
+
+
             } else {
-                if (aux->dir == NULL || aux->dir->cor == BLACK) {
+                if (aux->dir == NULL || aux->dir->cor == BLACK) {                                                   //*caso 3       
+                    printf("Caso 3\n");
                     if (aux->esq != NULL) {
                         aux->esq->cor = BLACK;
+                        printf("O filho esquerdo do no %d foi pintado de preto\n", aux->esq->id);
                     }
                     aux->cor = RED;
+                    printf("O irmao %d foi pintado de vermelho\n", aux->id);
+                    printf("Rotaciona o irmao a direita\n");
                     rotacaoDireita(arvore, aux);
                     aux = pai->dir;
-                }
+                    printf("O no %d recebeu o filho direito do pai %d (atualiza irmao)\n", aux->id, pai->id);
+                }                                                                                                   //*caso 4
+                printf("Caso 4\n");
                 aux->cor = pai->cor;
+                printf("O irmao %d recebeu a cor do pai %d\n", aux->id, pai->id);
                 pai->cor = BLACK;
+                printf("O pai %d foi pintado de preto\n", pai->id);
                 if (aux->dir != NULL) {
                     aux->dir->cor = BLACK;
+                    printf("O filho direito do no %d foi pintado de preto\n", aux->dir->id);
                 }
+                printf("Rotaciona o pai a esquerda\n");
                 rotacaoEsquerda(arvore, pai);
                 no = arvore->raiz;
             }
-        } else {
-            aux = pai->esq;
-            if (aux->cor == RED) {
+
+
+        } else {                                                                            //*Se o nó for igual ao filho direito do pai
+            aux = pai->esq;                                                                 // O nó aux recebe o filho esquerdo do pai
+            if (aux->cor == RED) {                                                          //*caso 1
+            printf("Caso 1\n");
                 aux->cor = BLACK;
+                printf("O irmao vermelho %d foi pintado de preto\n", aux->id);
                 pai->cor = RED;
+                printf("O pai %d foi pintado de vermelho\n", pai->id);
+                printf("Rotaciona o pai a direita\n");
                 rotacaoDireita(arvore, pai);
                 aux = pai->esq;
+                printf("O no %d recebeu o filho esquerdo do pai %d\n", aux->id, pai->id);
             }
-            if ((aux->dir == NULL || aux->dir->cor == BLACK) && (aux->esq == NULL || aux->esq->cor == BLACK)) {
+            if ((aux->dir == NULL || aux->dir->cor == BLACK) && (aux->esq == NULL || aux->esq->cor == BLACK)) {     //*caso 2
+            printf("Caso 2\n");
                 aux->cor = RED;
+                printf("O irmao %d foi pintado de vermelho\n", aux->id);
                 no = pai;
+                printf("O no %d recebeu o pai %d\n", no->id, pai->id);
                 pai = no->pai;
-            } else {
+                printf("O pai %d recebeu o avo %d\n", pai->id, no->pai->id);
+            } else {                                                                                                //*caso 3
+            printf("Caso 3\n");
                 if (aux->esq == NULL || aux->esq->cor == BLACK) {
                     if (aux->dir != NULL) {
                         aux->dir->cor = BLACK;
+                        printf("O filho direito do no %d foi pintado de preto\n", aux->dir->id);
                     }
                     aux->cor = RED;
+                    printf("O irmao %d foi pintado de vermelho\n", aux->id);
+                    printf("rotaciona o irmao a esquerda\n");
                     rotacaoEsquerda(arvore, aux);
                     aux = pai->esq;
-                }
+                    printf("O no %d recebeu o filho esquerdo do pai %d (atualiza irmao)\n", aux->id, pai->id);
+                }   
+                printf("Caso 4\n");                                                                                                //*caso 4
                 aux->cor = pai->cor;
+                printf("O irmao %d recebeu a cor do pai %d\n", aux->id, pai->id);
                 pai->cor = BLACK;
+                printf("O pai %d foi pintado de preto\n", pai->id);
                 if (aux->esq != NULL) {
                     aux->esq->cor = BLACK;
+                    printf("O filho esquerdo do no %d foi pintado de preto\n", aux->esq->id);
                 }
+                printf("Rotaciona o pai a direita\n");
                 rotacaoDireita(arvore, pai);
                 no = arvore->raiz;
+                printf("O no %d recebeu a raiz da arvore\n", no->id);
             }
         }
     }
     if (no != NULL) {
         no->cor = BLACK;
+        printf("O no %d foi pintado de preto\n", no->id);
     }
 }
 
@@ -411,7 +450,7 @@ void printarNos(TreeRedBlackNode *no){
 }
 
 /*======================================== Calcular alturaS======================================== */
-int alturaArvore(TreeRedBlackNode *no){  //funcao para calcular a altura da arvore rb ela ela recebe a raiz da arvore
+int alturaArvore(TreeRedBlackNode *no){ //funcao para calcular a altura da arvore ela recebe a raiz da arvore, ignora os nos nulos e conta a raiz como primeiro nivel
     if (no == NULL) // se o no for nulo
         return 0; // retorna 0
     else // se o no nao for nulo
@@ -420,46 +459,80 @@ int alturaArvore(TreeRedBlackNode *no){  //funcao para calcular a altura da arvo
         int dir = alturaArvore(no->dir); // a altura da arvore direita recebe a funcao para calcular a altura da arvore direita
         if (esq > dir) // se a altura da arvore esquerda for maior que a altura da arvore direita
             return esq + 1; // retorna a altura da arvore esquerda + 1
-        else // se a altura da arvore esquerda for menor ou igual a altura da arvore direita
+        else // se a altura da arvore esquerda nao for maior que a altura da arvore direita
             return dir + 1; // retorna a altura da arvore direita + 1
     }
-
 }
 
-int alturaNegra(TreeRedBlackNode *no) { //funcao para calcular a altura negra da arvore rb
-    if (no == NULL) // se o no for nulo
-        return 1; // retorna 1
-    else // se o no nao for nulo
-    {
+int alturaNegra(TreeRedBlackNode *no) { //calcula nos negros, as folhas nulas nao contam como nos negros
+    if (no == NULL) { // se o no for nulo
+        return 0; // retorna 0
+    } else {
         int esq = alturaNegra(no->esq); // a altura negra da arvore esquerda recebe a funcao para calcular a altura negra da arvore esquerda de maneira recursiva
         int dir = alturaNegra(no->dir); // a altura negra da arvore direita recebe a funcao para calcular a altura negra da arvore direita
-        if (esq != -1 && dir != -1 && esq != dir) // se a altura negra da arvore esquerda for diferente de -1 e a altura negra da arvore direita for diferente de -1 e a altura negra da arvore esquerda for diferente da altura negra da arvore direita
-            return -1; // retorna -1 significa que a arvore nao é rubro negra
-        else // se a altura negra da arvore esquerda for igual a altura negra da arvore direita
-        {
-            if (no->cor == BLACK) // se a cor do no for preta
-                return esq + 1; // retorna a altura negra da arvore esquerda + 1
-            else // se a cor do no for vermelha
-                return esq; // retorna a altura negra da arvore esquerda
+        if (no->cor == BLACK) { // se o no for preto
+            return esq + dir + 1; // retorna a soma das alturas negras da arvore esquerda e direita + 1
+        } else { // se o no for vermelho
+            return (esq + dir)-1; // retorna a soma das alturas negras da arvore esquerda e direita
         }
     }
 }
 
+
 /*======================================== Calcular altuaS======================================== */
 
 /*======================================== Calcular porcentagem======================================== */
-float percentagemNegra(TreeRedBlackNode *no){ //sem considerar que os NULL sao pretos, apenas considerando os nos
-    int altura = alturaArvore(no); // a altura da arvore recebe a funcao para calcular a altura da arvore
-    int alturaN = alturaNegra(no); // a altura negra da arvore recebe a funcao para calcular a altura negra da arvore
-    return ((float)alturaN / (float)altura) * 100; // retorna a porcentagem de nos pretos
+
+int contaNos(TreeRedBlackNode *no) {
+    if (no == NULL) {
+        return 0;
+    } else {
+        int esq = contaNos(no->esq);
+        int dir = contaNos(no->dir);
+        return esq + dir + 1;
+    }
 }
 
-float percentagemVermelha(TreeRedBlackNode *no){ //sem considerar os as cores pretas do NULL
-    int altura = alturaArvore(no); // a altura da arvore recebe a funcao para calcular a altura da arvore
-    int alturaN = alturaNegra(no); // a altura negra da arvore recebe a funcao para calcular a altura negra da arvore
-    return ((float)(altura - alturaN) / (float)altura) * 100; // retorna a porcentagem de nos vermelhos
+int contarNosVermelhos(TreeRedBlackNode *no) {
+    if (no == NULL) {
+        return 0;
+    } else {
+        int esq = contarNosVermelhos(no->esq);
+        int dir = contarNosVermelhos(no->dir);
+        if (no->cor == RED) {
+            return esq + dir + 1;
+        } else {
+            return esq + dir;
+        }
+    }
 }
 
+int contaNosNegros(TreeRedBlackNode *no) {
+    if (no == NULL) {
+        return 0;
+    } else {
+        int esq = contaNosNegros(no->esq);
+        int dir = contaNosNegros(no->dir);
+        if (no->cor == BLACK) {
+            return esq + dir + 1;
+        } else {
+            return esq + dir;
+        }
+    }
+}
+
+
+float percentagemNegra(TreeRedBlackNode *no){ //desce a arvore contando nivel a nivel quantas apariçoes de nos negros tem, divide pelo total de nos da arvore faz a porcentagem
+    int totalNos = contaNos(no); // função para contar o número total de nós na árvore
+    int nosNegros = contaNosNegros(no); // função para contar o número de nós negros na árvore
+    return ((float)nosNegros / (float)totalNos) * 100; // retorna a porcentagem de nós negros
+}
+
+float percentagemVermelha(TreeRedBlackNode *no){ //desce a arvore contando nivel a nivel quantas apariçoes de nos vermelhos tem e divide pelo tamanho total de nos da arvore para fazer porcentagem
+    int totalNos = contaNos(no); // função para contar o número total de nós na árvore
+    int nosVermelhos = contarNosVermelhos(no); // função para contar o número de nós vermelhos na árvore
+    return ((float)nosVermelhos / (float)totalNos) * 100; // retorna a porcentagem de nós vermelhos
+}
 
 
 /* =============================Plot .dot =============================*/

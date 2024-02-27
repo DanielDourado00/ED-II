@@ -1,6 +1,5 @@
 /* funcao para remover um no da arvore, tendo em vista os seguintes casos:
-CASO1)
--irmao do no a ser removido é vermelho
+CASO1) irmao do no a ser removido é vermelho
 -pai fica rubro
 - irmao fica negro
 -rotaciona esquerda
