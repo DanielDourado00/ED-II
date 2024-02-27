@@ -1,15 +1,9 @@
 digraph ArvoreRubroNegra {
-1052 [label="1052", color=black];
-1052 -> 1051;
+1044 [label="1044", color=black];
+1044 -> 1022;
+1022 [label="1022", color=black];
+1022 -> 1041;
+1041 [label="1041", color=red];
+1044 -> 1051;
 1051 [label="1051", color=black];
-1051 -> 1023;
-1023 [label="1023", color=black];
-1023 -> 1022;
-1022 [label="1022", color=red];
-1023 -> 1024;
-1024 [label="1024", color=red];
-1052 -> 1053;
-1053 [label="1053", color=black];
-1053 -> 1054;
-1054 [label="1054", color=red];
 }

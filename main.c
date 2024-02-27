@@ -11,7 +11,7 @@ int main()
 
    do
     {
-        printf("1 - Inserir \n2 - Buscar\n3 - Remover\n4 - Altura Total da arvore\n5 - Altura Negra\n6 - Vizualizar info nos\n7 -Percento Negro\n8 - Percento Rubro\n9 - Custo de busca \n0 - Sair\n"); // menu de opcoes
+        printf("1 - Inserir \n2 - Buscar\n3 - Remover\n4 - Altura Total da arvore\n5 - Altura Negra\n6 - Vizualizar info nos\n7 - Percento Negro\n8 - Percento Rubro\n9 - Custo de busca \n0 - Sair\n"); // menu de opcoes
         scanf("%d", &opcao); // lendo a opcao do usuario
         switch (opcao) // switch case para as opcoes
         {
@@ -51,7 +51,7 @@ int main()
             scanf("%d", &id); // lendo o id do no que o usuario quer remover
             if (buscarNo(arvore, id)) // se o no existir na arvore
             {
-                removerNo(arvore, id); // removendo o no da arvore
+                deleteno(arvore, buscarNo(arvore, id)); // removendo o no da arvore
                 visualizarArvoreDot(arvore); // funcao do graphviz para visualizar a arvore passando por parametro a arvore
 
                 printf("No removido com sucesso!\n"); // mensagem de sucesso
@@ -84,8 +84,8 @@ int main()
             printf("A Percentagem de nos Rubros é de: %f\n", percentagemVermelha(arvore->raiz));
             break;
         case 9:
-            system("clear");
-            printf("O custo medio de busca é: %f", custoMedioBusca(arvore, id));  //numero de comparacao de chaves
+            system("clear"); 
+            printf("O custo medio de busca é: %f\n", custoMedioBusca(arvore, id));  //numero de comparacao de chaves
             break;
         case 0: // caso a opcao seja 4
             system("clear"); // limpando a tela

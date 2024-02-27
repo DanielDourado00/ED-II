@@ -23,3 +23,173 @@ CASO4) irmao negro e filho direito do irmao rubro
 -rotaciona pai esquerda
 -se raiz for rubro troque para negro
  */
+
+
+ void removerNo(rbtree *arvore, int id) {
+    TreeRedBlackNode *no = buscarNo(arvore, id); // Busca o nó a ser removido
+    if (no == NULL) {
+        printf("Nó com o ID %d não encontrado na árvore.\n", id);
+        return;
+    }
+
+    TreeRedBlackNode *aux, *irmao;
+    int duploNegro = 0;
+
+    if (no->esq == NULL || no->dir == NULL) { // Verifica se o nó tem no máximo um filho
+        aux = no;
+    } else { // Se o nó tem dois filhos, encontra o sucessor para remoção
+        aux = no->dir;
+        while (aux->esq != NULL) {
+            aux = aux->esq;
+        }
+    }
+
+    // Encontra o filho não nulo de aux
+    if (aux->esq != NULL) {
+        irmao = aux->esq;
+    } else {
+        irmao = aux->dir;
+    }
+
+    // Atualiza o pai do irmão
+    if (irmao != NULL) {
+        irmao->pai = aux->pai;
+    }
+
+    // Caso o nó a ser removido seja vermelho ou aux seja vermelho
+    if (aux->cor == RED || (irmao != NULL && irmao->cor == RED)) {
+        if (irmao != NULL) {
+            irmao->cor = BLACK; // Irmão fica preto
+        }
+        if (aux->pai != NULL) {
+            if (aux == aux->pai->esq) {
+                aux->pai->esq = NULL;
+            } else {
+                aux->pai->dir = NULL;
+            }
+        }
+        free(aux);
+        return;
+    }
+
+    // Caso aux seja duplo negro
+    if (irmao != NULL && irmao->cor == BLACK) {
+        duploNegro = 1;
+    }
+
+    if (aux->pai != NULL) {
+        if (aux == aux->pai->esq) {
+            aux->pai->esq = irmao;
+        } else {
+            aux->pai->dir = irmao;
+        }
+    } else {
+        arvore->raiz = irmao;
+    }
+
+    if (!duploNegro) {
+        if (irmao != NULL) {
+            irmao->cor = BLACK;
+        }
+        free(aux);
+        return;
+    }
+
+    if (irmao != NULL && irmao->cor == BLACK && 
+        ((irmao->esq == NULL && irmao->dir == NULL) || (irmao->esq != NULL && irmao->esq->cor == BLACK && irmao->dir != NULL && irmao->dir->cor == BLACK))) {
+        irmao->cor = RED; // Caso 1
+        if (aux->pai->cor == RED) {
+            aux->pai->cor = BLACK;
+        } else {
+            removerFixup(arvore, aux->pai, aux->pai->pai);
+
+        }
+    } else {
+        if (irmao != NULL && irmao->cor == BLACK) {
+            if (irmao->esq != NULL && irmao->esq->cor == RED) {
+                // Caso 2
+                irmao->cor = RED;
+                irmao->esq->cor = BLACK;
+                rotacaoDireita(arvore, irmao);
+            } else if (irmao->dir != NULL && irmao->dir->cor == RED) {
+                // Caso 3
+                irmao->cor = aux->pai->cor;
+                aux->pai->cor = BLACK;
+                irmao->dir->cor = BLACK;
+                rotacaoEsquerda(arvore, aux->pai);
+            }
+        } else {
+            // Caso 4
+            irmao->cor = aux->pai->cor;
+            aux->pai->cor = BLACK;
+            if (irmao->dir != NULL) {
+                irmao->dir->cor = BLACK;
+            }
+            rotacaoEsquerda(arvore, aux->pai);
+        }
+    }
+
+    free(aux);
+}
+
+void removerFixup(rbtree *arvore, TreeRedBlackNode *no, TreeRedBlackNode *pai) {
+    TreeRedBlackNode *irmao;
+    while (no != arvore->raiz && (no == NULL || no->cor == BLACK)) {
+        if (no == pai->esq) {
+            irmao = pai->dir;
+            if (irmao->cor == RED) {
+                irmao->cor = BLACK;
+                pai->cor = RED;
+                rotacaoEsquerda(arvore, pai);
+                irmao = pai->dir;
+            }
+            if ((irmao->esq == NULL || irmao->esq->cor == BLACK) && 
+                (irmao->dir == NULL || irmao->dir->cor == BLACK)) {
+                irmao->cor = RED;
+                no = pai;
+                pai = no->pai;
+            } else {
+                if (irmao->dir == NULL || irmao->dir->cor == BLACK) {
+                    irmao->esq->cor = BLACK;
+                    irmao->cor = RED;
+                    rotacaoDireita(arvore, irmao);
+                    irmao = pai->dir;
+                }
+                irmao->cor = pai->cor;
+                pai->cor = BLACK;
+                irmao->dir->cor = BLACK;
+                rotacaoEsquerda(arvore, pai);
+                no = arvore->raiz;
+            }
+        } else {
+            irmao = pai->esq;
+            if (irmao->cor == RED) {
+                irmao->cor = BLACK;
+                pai->cor = RED;
+                rotacaoDireita(arvore, pai);
+                irmao = pai->esq;
+            }
+            if ((irmao->dir == NULL || irmao->dir->cor == BLACK) && 
+                (irmao->esq == NULL || irmao->esq->cor == BLACK)) {
+                irmao->cor = RED;
+                no = pai;
+                pai = no->pai;
+            } else {
+                if (irmao->esq == NULL || irmao->esq->cor == BLACK) {
+                    irmao->dir->cor = BLACK;
+                    irmao->cor = RED;
+                    rotacaoEsquerda(arvore, irmao);
+                    irmao = pai->esq;
+                }
+                irmao->cor = pai->cor;
+                pai->cor = BLACK;
+                irmao->esq->cor = BLACK;
+                rotacaoDireita(arvore, pai);
+                no = arvore->raiz;
+            }
+        }
+    }
+    if (no != NULL) {
+        no->cor = BLACK;
+    }
+}
